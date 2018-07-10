@@ -1,14 +1,10 @@
-package io.github.jfcameron;
+package io.github.jfcameron.githubget;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import jfc.github.APIToken;
-
-import jfc.github.Account;
-import jfc.github.Issue;
 
 /**
  * entry for this project.
@@ -17,10 +13,17 @@ public class Application
 {
     public static void main(String[] args) throws Exception
     {
-        jfc.BuildInfo.prettyPrint();
+        io.github.jfcameron.githubget.BuildInfo.prettyPrint();
+        
+        Context context = new Context(ImmutableMap.of());
 
         APIToken credentials = args.length > 0 ? new APIToken(args[0]) : null;
 
+        //printGHData(credentials);
+    }
+
+    private static void printGHData(final APIToken credentials) throws Exception
+    {
         Account githubdata = new Account(
                 "jfcameron", //Account name
                 true, //ignore forks
@@ -28,12 +31,7 @@ public class Application
                         "bash-settings",
                         "TF2-Bindings"),
                 credentials);
-        
-        printGHData(githubdata, credentials);
-    }
 
-    private static void printGHData(final Account githubdata, final APIToken credentials)
-    {
         // AggregateLanguageScores
         final Map<String, Long> totalLanguageScores = new HashMap<>();
         {

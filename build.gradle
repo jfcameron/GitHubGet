@@ -1,8 +1,3 @@
-/*
- * Build recipe for the current project.
- * user guide available at https://docs.gradle.org/4.8/userguide/tutorial_java_projects.html
- */
-
 buildscript {
     repositories{}
 
@@ -21,9 +16,7 @@ dependencies {
     compile 'com.google.guava:guava:23.0'
     testCompile 'junit:junit:4.12'       
     
-    compile files('lib/json-simple-1.1.1.jar')
-    
-    compile project('library')
+    compile project(':LibGitHubGet')
 }
 
 apply plugin: 'de.fuerstenau.buildconfig'
@@ -31,8 +24,10 @@ apply plugin: "com.github.johnrengelman.shadow"
 
 apply from: 'jfc.gradle'
 
+jfc.buildConfig("io.github.jfcameron.githubget")
+
 repositories {
     jcenter()
 }
 
-mainClassName = 'jfc/Application'
+mainClassName = 'io/github/jfcameron/githubget/Application'

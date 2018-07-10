@@ -14,24 +14,27 @@ ext.jfc = [
         if ("$serr".size() != 0) throw new RuntimeException("a shell command \"$aShellCommand\" had errors: \"$serr\"")
     
         return sout.replaceAll("\n","")
-    }      
-]
-
-/**
- * common configuration for de.fuerstenau.buildconfig plugin
- */
-buildConfig { 
-    appName = project.name   
-    version = project.version
-    packageName = "jfc"
-    clsName = "BuildInfo"
-    charset = "UTF-8"
+    },
     
-    buildConfigField 'String', 'Branch', "${jfc.execshell("git rev-parse --abbrev-ref HEAD")}"
-    buildConfigField 'String', 'Commit', "${jfc.execshell("git rev-parse HEAD")}"    
-    buildConfigField 'String', 'Date',   "${new java.util.Date(System.currentTimeMillis())}"
-    buildConfigField 'String', 'Author', "jfcameron.github.io"
-}
+    /**
+     * configures the de.fuerstenau.buildconfig plugin for this project
+     * @param aPackageName the name of the package in which the BuildInfo class should be generated
+     */
+    buildConfig: {String aPackageName ->
+        buildConfig { 
+            appName = project.name   
+            version = project.version
+            packageName = "${aPackageName}"
+            clsName = "BuildInfo"
+            charset = "UTF-8"
+    
+            buildConfigField 'String', 'Branch', "${jfc.execshell("git rev-parse --abbrev-ref HEAD")}"
+            buildConfigField 'String', 'Commit', "${jfc.execshell("git rev-parse HEAD")}"    
+            buildConfigField 'String', 'Date',   "${new java.util.Date(System.currentTimeMillis())}"
+            buildConfigField 'String', 'Author', "jfcameron.github.io"
+        }
+    }
+]
 
 /**
  * adds args to run task

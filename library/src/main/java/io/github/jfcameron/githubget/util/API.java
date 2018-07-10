@@ -1,6 +1,6 @@
-package io.github.jfcameron.util;
+package io.github.jfcameron.githubget.util;
 
-import io.github.jfcameron.APIToken;
+import io.github.jfcameron.githubget.APIToken;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;

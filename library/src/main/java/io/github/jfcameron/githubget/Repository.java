@@ -1,6 +1,6 @@
-package io.github.jfcameron;
+package io.github.jfcameron.githubget;
 
-import io.github.jfcameron.util.Once;
+import io.github.jfcameron.githubget.util.Once;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -86,7 +86,7 @@ public final class Repository
     // public Repository(final String aAccountName, final String aRepoName, final String aAPIToken)
     public Repository(final String aOwnerName, final String aRepoName, final APIToken aAPIToken) throws ParseException, Exception
     {
-        this((JSONObject) (new JSONParser()).parse(io.github.jfcameron.util.API.authenticatedFetch(
+        this((JSONObject) (new JSONParser()).parse(io.github.jfcameron.githubget.util.API.authenticatedFetch(
                 "https://api.github.com/repos/" + aOwnerName + "/" + aRepoName, aAPIToken)),
                 aAPIToken
         );
@@ -110,7 +110,7 @@ public final class Repository
         {
             try
             {
-                JSONObject languages = (JSONObject) parser.parse(io.github.jfcameron.util.API.authenticatedFetch(
+                JSONObject languages = (JSONObject) parser.parse(io.github.jfcameron.githubget.util.API.authenticatedFetch(
                                 ((JSONObject) aRepositoryJSON).get("languages_url").toString(), aAPIToken));
 
                 for (Iterator iterator = languages.keySet().iterator(); iterator.hasNext();)
@@ -146,7 +146,7 @@ public final class Repository
             {
                 JSONArray issues;
 
-                issues = (JSONArray) parser.parse(io.github.jfcameron.util.API.authenticatedFetch(
+                issues = (JSONArray) parser.parse(io.github.jfcameron.githubget.util.API.authenticatedFetch(
                                 ((JSONObject) aRepositoryJSON).get("issues_url").toString(), aAPIToken));
 
                 issues.forEach((issue) -> m_Issues.add(new Issue(((JSONObject) issue))));

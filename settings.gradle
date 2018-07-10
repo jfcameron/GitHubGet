@@ -1,3 +1,5 @@
 rootProject.name = "GitHubGet"
 
 include 'library'
+
+project(":library").name = "LibGitHubGet"

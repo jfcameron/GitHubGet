@@ -1,4 +1,4 @@
-package io.github.jfcameron;
+package io.github.jfcameron.githubget;
 
 import org.json.simple.JSONObject;
 

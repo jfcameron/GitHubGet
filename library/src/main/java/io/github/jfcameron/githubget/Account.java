@@ -1,6 +1,5 @@
-package io.github.jfcameron;
+package io.github.jfcameron.githubget;
 
-import io.github.jfcameron.util.Once;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -9,10 +8,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import io.github.jfcameron.githubget.util.Once;
 
 /**
  * Models a github account
- *
  */
 public final class Account
 {
@@ -42,8 +41,7 @@ public final class Account
     
     //private final List<Organization> m_Organizations;
     */
-    
-    
+
     /**
      * list of repositories associated with the account
      */
@@ -85,7 +83,7 @@ public final class Account
 
             try
             {
-                final JSONArray repos = (JSONArray) parser.parse(io.github.jfcameron.util.API.authenticatedFetch(
+                final JSONArray repos = (JSONArray) parser.parse(io.github.jfcameron.githubget.util.API.authenticatedFetch(
                                 "https://api.github.com/users/"
                                 + aGithubAccountName + "/repos",
                                 aAPIToken));

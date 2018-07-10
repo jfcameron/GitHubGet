@@ -1,4 +1,4 @@
-package io.github.jfcameron;
+package io.github.jfcameron.githubget;
 
 /**
  * token used to perform gh api requests. A token is not strictly necessary but

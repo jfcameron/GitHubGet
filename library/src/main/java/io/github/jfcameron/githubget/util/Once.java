@@ -1,4 +1,4 @@
-package io.github.jfcameron.util;
+package io.github.jfcameron.githubget.util;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
