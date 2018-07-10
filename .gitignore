@@ -1,0 +1,7 @@
+build/*
+.gradle
+.nb-gradle-properties
+.nb-gradle
+
+!.keep
+/library/build/

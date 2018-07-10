@@ -1,0 +1,29 @@
+buildscript {
+    repositories{}
+
+    dependencies{
+        //classpath files('lib-gradle/BuildConfigPlugin-1.1.8-jfcameronFork.jar') // fuerstenau fork from fs
+        //classpath "com.github.jengelman.gradle.plugins:shadow:2.0.4" // Tasks for making uber jars
+    }
+}
+
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    api 'org.apache.commons:commons-math3:3.6.1'
+
+    implementation 'com.google.guava:guava:23.0'
+
+    testImplementation 'junit:junit:4.12'
+    
+    compile files('lib/json-simple-1.1.1.jar')
+}
+
+//apply plugin: 'de.fuerstenau.buildconfig'
+//apply plugin: "com.github.johnrengelman.shadow"
+
+repositories {
+    jcenter()
+}
