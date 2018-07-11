@@ -8,14 +8,13 @@ package io.github.jfcameron.githubget.taf;
 import java.util.Map;
 
 /**
- *
- * @author josephcameron
+ * I dont like this name but it kind of fits
  */
 public class Context
 {
     Map<String, Program> m_Programs;
     
-    public Context(final Map<String, Program> aPrograms, final String[] aRawArgs)
+    public Context(final String[] aRawArgs, final Map<String, Program> aPrograms)
     {
         
     }

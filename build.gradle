@@ -1,8 +1,6 @@
 buildscript {
-    repositories{}
-
     dependencies{
-        classpath files('lib-gradle/BuildConfigPlugin-1.1.8-jfcameronFork.jar') // fuerstenau fork from fs
+        classpath files('lib-gradle/BuildConfigPlugin-1.1.8-fork-jfcameron-1.0.jar') // fuerstenau fork from fs
         classpath "com.github.jengelman.gradle.plugins:shadow:2.0.4" // Tasks for making uber jars
     }
 }
@@ -22,7 +20,7 @@ dependencies {
 apply plugin: 'de.fuerstenau.buildconfig'
 apply plugin: "com.github.johnrengelman.shadow"
 
-apply from: 'jfc.gradle'
+apply from: "https://raw.githubusercontent.com/jfcameron/jfc-gradle/master/scripts/jfc.gradle"
 
 jfc.buildConfig("io.github.jfcameron.githubget")
 

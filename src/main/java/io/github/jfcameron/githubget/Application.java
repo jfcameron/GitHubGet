@@ -1,5 +1,11 @@
 package io.github.jfcameron.githubget;
 
+import com.google.common.collect.ImmutableMap;
+import io.github.jfcameron.githubget.taf.Context;
+import io.github.jfcameron.githubget.taf.Flag;
+import io.github.jfcameron.githubget.taf.NamedArgument;
+import io.github.jfcameron.githubget.taf.PositionalArgument;
+import io.github.jfcameron.githubget.taf.Program;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,8 +20,19 @@ public class Application
     public static void main(String[] args) throws Exception
     {
         io.github.jfcameron.githubget.BuildInfo.prettyPrint();
-        
-        Context context = new Context(ImmutableMap.of());
+
+        Context context = new Context(args, ImmutableMap.of("blorp", new Program()
+        {
+            {
+
+            }
+
+            @Override
+            public void run(List<Flag> aFlags, List<PositionalArgument> aPositionalArguments, List<NamedArgument> aNamedArguments)
+            {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        }));
 
         APIToken credentials = args.length > 0 ? new APIToken(args[0]) : null;
 
