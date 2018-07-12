@@ -1,22 +1,52 @@
 package io.github.jfcameron.githubget.taf;
 
+import com.google.common.primitives.Chars;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An embedded program
  */
 public abstract class Program
 {
-    //private Map<String, Program> m_Children;
+    private Map<String, Program> m_Commands = new HashMap<>();
 
     /**
-     * Entry point for this program
+     * Entry point for user-defined behaviour of this program
      */
-    public abstract void run(List<Parameter> aParameters);
+    protected abstract void usermain(List<Parameter> aParameters);
 
     /**
-     * overload that takes raw java args list: bootstraps the arg typing
+     * Given a set of parameters, run the user-defined behaviour of the program
+     * (plus some boilerplate for handling commands)
+     */
+    public void run(List<Parameter> aParameters)
+    {
+        for (int i = 0, s = aParameters.size(); i < s; ++i)
+            if (aParameters.get(i) instanceof Parameter.Positional)
+                if (m_Commands.containsKey(((Parameter.Positional) aParameters.get(i)).getValue()))
+                {
+                    final String commandName = ((Parameter.Positional) aParameters.get(i)).getValue();
+
+                    List<Parameter> subcommandParams = new ArrayList<>(aParameters).subList(i, aParameters.size());
+                    subcommandParams.remove(0);
+
+                    aParameters.subList(i, aParameters.size()).clear();
+
+                    usermain(aParameters);
+                    m_Commands.get(commandName).run(subcommandParams);
+
+                    return;
+                }
+
+        usermain(aParameters);
+    }
+
+    /**
+     * this overload of run takes standard java program args, converting them to
+     * the arg types defined in this library
      */
     public void run(String[] aRawArgs)
     {
@@ -52,9 +82,8 @@ public abstract class Program
                 }
                 else
                     if (rarg.length() > 1 && rarg.startsWith("-"))
-                        if (treatFlagListsAsPositionalParameters == false)
-                            for (final char option : rarg.substring(1, rarg.length()).toCharArray())
-                                parameters.add(new Parameter.Option(option));
+                        if (!treatFlagListsAsPositionalParameters)
+                            parameters.add(new Parameter.OptionList(Chars.asList(rarg.substring(1, rarg.length()).toCharArray())));
                         else
                             parameters.add(new Parameter.Positional(rarg));
                     else
@@ -64,8 +93,12 @@ public abstract class Program
         run(parameters);
     }
 
-    /*protected Program(Map<String, Program> aChildren)
+    public Program(Map<String, Program> aCommands)
     {
-        m_Children = aChildren;
-    }*/
+        m_Commands = aCommands;
+    }
+
+    public Program()
+    {
+    }
 }
