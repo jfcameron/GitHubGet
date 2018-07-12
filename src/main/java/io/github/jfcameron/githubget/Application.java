@@ -1,10 +1,6 @@
 package io.github.jfcameron.githubget;
 
-import com.google.common.collect.ImmutableMap;
-import io.github.jfcameron.githubget.taf.Context;
-import io.github.jfcameron.githubget.taf.Flag;
-import io.github.jfcameron.githubget.taf.NamedArgument;
-import io.github.jfcameron.githubget.taf.PositionalArgument;
+import io.github.jfcameron.githubget.taf.Parameter;
 import io.github.jfcameron.githubget.taf.Program;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,23 +15,27 @@ public class Application
 {
     public static void main(String[] args) throws Exception
     {
-        io.github.jfcameron.githubget.BuildInfo.prettyPrint();
+        //io.github.jfcameron.githubget.BuildInfo.prettyPrint();
 
-        Context context = new Context(args, ImmutableMap.of("blorp", new Program()
+        new Program()
         {
             {
 
             }
 
             @Override
-            public void run(List<Flag> aFlags, List<PositionalArgument> aPositionalArguments, List<NamedArgument> aNamedArguments)
+            public void run(List<Parameter> aParameters)
             {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                if (aParameters.isEmpty())
+                    throw new RuntimeException(BuildInfo.NAME + " requires arguments!");
+
+                if (!(aParameters.get(0) instanceof Parameter.Positional) || aParameters.get(0).getName().length() != 40)
+                    throw new RuntimeException(BuildInfo.NAME + " first argument must be an OAuth token!");
+
             }
-        }));
+        }.run(args);
 
-        APIToken credentials = args.length > 0 ? new APIToken(args[0]) : null;
-
+        //APIToken credentials = args.length > 0 ? new APIToken(args[0]) : null;
         //printGHData(credentials);
     }
 
