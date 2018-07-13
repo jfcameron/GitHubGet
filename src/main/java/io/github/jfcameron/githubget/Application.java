@@ -1,30 +1,50 @@
 package io.github.jfcameron.githubget;
 
-import com.google.common.collect.ImmutableMap;
 import io.github.jfcameron.githubget.taf.Parameter;
 import io.github.jfcameron.githubget.taf.Program;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * entry for this project.
  */
 public class Application
 {
+    static String description = "";
+    
     public static void main(String[] args) throws Exception
     {
-        new Program(ImmutableMap.of(
-                "Blar", new Program()
+        BuildInfo.prettyPrint((Field[] fields) ->
         {
-            @Override
-            protected void usermain(List<Parameter> aParameters)
+            for (final Field field : fields)
             {
-                System.out.println("Greetings from blar!");
+                try
+                {
+                    description += field.getName() + ": " + field.get(null);
+                }
+                catch (IllegalArgumentException | IllegalAccessException ex)
+                {
+                    Logger.getLogger(Application.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-        }))
+        });
+        
+        new Program("GitHubGet", "utility for viewing github data.",
+                Arrays.asList(new Program("Blar", "The blar command is very important!")
+                {
+                    @Override
+                    protected void usermain(Parameter.List aParameters)
+                    {
+                        if (aParameters.size() == 0)
+                            System.out.println("Greetings from blar!");
+                    }
+                }))
         {
             private void printGHData(final APIToken credentials) throws Exception
             {
@@ -125,49 +145,8 @@ public class Application
             }
 
             @Override
-            protected void usermain(List<Parameter> aParameters)
+            protected void usermain(Parameter.List aParameters)
             {
-                aParameters.forEach((param) -> 
-                {
-                    if (param instanceof Parameter.OptionList)
-                    {
-                        if (((Parameter.OptionList)param).contains('h'))
-                        {
-                            BuildInfo.prettyPrint();
-                        }
-                    }
-                    else if (param instanceof Parameter.LongOption)
-                    {
-                        if ("help".equals(((Parameter.LongOption)param).getName().toLowerCase()))
-                        {
-                            BuildInfo.prettyPrint();
-                        }
-                    }
-                });
-                
-                /*if (aParameters.isEmpty())
-                    throw new RuntimeException(BuildInfo.NAME + " requires arguments!");
-
-                if (aParameters.get(0) instanceof Parameter.OptionList)
-                {
-                    if (((Parameter.OptionList) aParameters.get(0)).contains('h'))
-                        io.github.jfcameron.githubget.BuildInfo.prettyPrint();
-                }
-                else
-                    if ((aParameters.get(0) instanceof Parameter.Positional))
-                    {
-                        if (((Parameter.Positional) aParameters.get(0)).getValue().length() != 40)
-                            throw new RuntimeException(BuildInfo.NAME + " first argument must be an OAuth token!");
-
-                        try
-                        {
-                            printGHData(new APIToken(((Parameter.Positional) aParameters.get(0)).getValue()));
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.getLogger(Application.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }*/
             }
         }.run(args);
     }

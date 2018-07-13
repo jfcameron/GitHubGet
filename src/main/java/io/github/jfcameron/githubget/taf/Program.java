@@ -1,7 +1,6 @@
 package io.github.jfcameron.githubget.taf;
 
 import com.google.common.primitives.Chars;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,16 +12,43 @@ public abstract class Program
 {
     private Map<String, Program> m_Commands = new HashMap<>();
 
+    private final String m_Name;
+
+    private final String m_Description;
+
     /**
      * Entry point for user-defined behaviour of this program
      */
-    protected abstract void usermain(List<Parameter> aParameters);
+    protected abstract void usermain(Parameter.List aParameters);
+
+    private void main(Parameter.List aParameters)
+    {
+        if (aParameters.containsOption('h') || aParameters.containsLongOption("help"))
+        {
+            System.out.println("Current command: " + m_Name);
+            System.out.println("Description: " + m_Description);
+
+            if (m_Commands.size() > 0)
+            {
+                System.out.println("sub commands: ");
+
+                m_Commands.forEach((k, v) ->
+                {
+                    System.out.println(k);
+                });
+            }
+            else
+                System.out.println(m_Name + " has no sub commands");
+        }
+
+        usermain(aParameters);
+    }
 
     /**
      * Given a set of parameters, run the user-defined behaviour of the program
      * (plus some boilerplate for handling commands)
      */
-    public void run(List<Parameter> aParameters)
+    public void run(Parameter.List aParameters)
     {
         for (int i = 0, s = aParameters.size(); i < s; ++i)
             if (aParameters.get(i) instanceof Parameter.Positional)
@@ -30,18 +56,18 @@ public abstract class Program
                 {
                     final String commandName = ((Parameter.Positional) aParameters.get(i)).getValue();
 
-                    List<Parameter> subcommandParams = new ArrayList<>(aParameters).subList(i, aParameters.size());
+                    Parameter.List subcommandParams = new Parameter.List(aParameters).subList(i, aParameters.size());
                     subcommandParams.remove(0);
 
                     aParameters.subList(i, aParameters.size()).clear();
 
-                    usermain(aParameters);
+                    main(aParameters);
                     m_Commands.get(commandName).run(subcommandParams);
 
                     return;
                 }
 
-        usermain(aParameters);
+        main(aParameters);
     }
 
     /**
@@ -50,7 +76,8 @@ public abstract class Program
      */
     public void run(String[] aRawArgs)
     {
-        final List<Parameter> parameters = new ArrayList<>();
+        //final List<Parameter> parameters = new ArrayList<>();
+        final Parameter.List parameters = new Parameter.List();
 
         boolean treatFlagListsAsPositionalParameters = false;
 
@@ -93,12 +120,20 @@ public abstract class Program
         run(parameters);
     }
 
-    public Program(Map<String, Program> aCommands)
+    public Program(final String aName, final String aDescription, List<Program> aCommands)
     {
-        m_Commands = aCommands;
+        m_Name = aName;
+        m_Description = aDescription;
+
+        if (null != aCommands)
+            aCommands.forEach((program) ->
+            {
+                m_Commands.put(program.m_Name, program);
+            });
     }
 
-    public Program()
+    public Program(final String aName, final String aDescription)
     {
+        this(aName, aDescription, null);
     }
 }

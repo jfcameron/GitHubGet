@@ -1,26 +1,191 @@
 package io.github.jfcameron.githubget.taf;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.function.Consumer;
 
 /**
- * positional argument: {value}, option {name}, longoption {name, value} How to
- * define option with value? if param type is list && contains option && next
- * param is positional then name is option, value is positional
+ * OptionListWithValue
  */
 public abstract class Parameter
 {
-    public static class List
+    public static class List//<T extends Parameter>
     {
-        private final java.util.List<Parameter> m_Parameters = new ArrayList<>();
-        
+        private final java.util.List<Parameter> m_Parameters;
+
+        /**
+         * default ctor
+         */
         protected List()
         {
-            
+            m_Parameters = new LinkedList<>();
         }
+
+        /**
+         * Deep copy of another paramlist
+         *
+         * @param aOther
+         */
+        protected List(final Parameter.List aOther)
+        {
+            m_Parameters = new LinkedList<>(aOther.m_Parameters);
+        }
+
+        /**
+         * View constructor. Does NOT make a deep copy of params
+         *
+         * @param aParameters
+         */
+        protected List(final java.util.List aParameters)
+        {
+            m_Parameters = aParameters;
+        }
+
+        /**
+         * @return total number of params
+         */
+        public int size()
+        {
+            return m_Parameters.size();
+        }
+
+        /**
+         * @param aIndex of param to get
+         * @return the param at aIndex
+         */
+        protected Parameter get(final int aIndex)
+        {
+            return m_Parameters.get(aIndex);
+        }
+
+        /**
+         * @param aParam the param to add
+         * @return returns true
+         */
+        protected boolean add(final Parameter aParam)
+        {
+            return m_Parameters.add(aParam);
+        }
+
+        /**
+         * @param aIndex index of the param to remove
+         * @return the param that was removed
+         */
+        protected Parameter remove(final int aIndex)
+        {
+            return m_Parameters.remove(aIndex);
+        }
+
+        /**
+         * creates a shallow copy of a subsection of the list
+         *
+         * @param aFirst start of subsection
+         * @param aLast end of subsection
+         * @return
+         */
+        protected Parameter.List subList(final int aFirst, final int aLast)
+        {
+            return new List(m_Parameters.subList(aFirst, aLast));
+        }
+
+        /**
+         * removes all parameters from the list
+         */
+        protected void clear()
+        {
+            m_Parameters.clear();
+        }
+
+        public void forEach(Consumer<? super Parameter> action)
+        {
+            m_Parameters.forEach(action);
+        }
+
+        public boolean containsLongOption(final String aName)
+        {
+            final java.util.List<LongOption> longOptions = new java.util.ArrayList<>();
+
+            m_Parameters.forEach((param) ->
+            {
+                if (param instanceof LongOption)
+                    longOptions.add((LongOption) param);
+            });
+
+            return longOptions.stream().anyMatch((longOption) -> (longOption.getName().equals(aName)));
+        }
+
+        public boolean containsOption(final Character aName)
+        {
+            final java.util.List<Character> options = new java.util.ArrayList<>();
+
+            m_Parameters.forEach((param) ->
+            {
+                if (param instanceof OptionList)
+                    ((OptionList) param).forEach((option) ->
+                    {
+                        options.add(option);
+                    });
+            });
+
+            return options.stream().anyMatch((option) -> (option.equals(aName)));
+        }
+
+        public boolean containsPositional(final String aValue)
+        {
+            final java.util.List<Positional> positionals = new java.util.ArrayList<>();
+
+            m_Parameters.forEach((param) ->
+            {
+                if (param instanceof Positional)
+                    positionals.add((Positional) param);
+            });
+
+            return positionals.contains(new Positional(aValue));
+        }
+
+        public Positional getPositional(final int aPosition)
+        {
+            final java.util.List<Positional> positionals = new java.util.ArrayList<>();
+
+            m_Parameters.forEach((Parameter param) ->
+            {
+                if (param instanceof Positional)
+                    positionals.add((Positional) param);
+            });
+
+            return positionals.get(aPosition);
+        }
+
+        //====================================================================================================
+        //???
+        private java.util.List<LongOptionWithValue> getLongOptionsWithValues()
+        {
+            final java.util.List<LongOptionWithValue> longOptionsWithValue = new java.util.ArrayList<>();
+
+            m_Parameters.forEach((param) ->
+            {
+                if (param instanceof LongOptionWithValue)
+                    longOptionsWithValue.add((LongOptionWithValue) param);
+            });
+
+            return longOptionsWithValue;
+        }
+
+        private java.util.List<Positional> getOptionListsWithValues()
+        {
+            throw new RuntimeException("getOptionListsWithValues currently not supported");
+            /*final java.util.List<Positional> positionals = new java.util.ArrayList<>();
+            
+            m_Parameters.forEach((param) ->
+            {
+                if (param instanceof Positional)
+                    positionals.add((Positional) param);
+            });
+
+            return positionals;*/
+        }
+        //====================================================================================================
     }
-    
+
     public static class Positional extends Parameter
     {
         private final String m_Value;
@@ -131,6 +296,23 @@ public abstract class Parameter
                 buffer += option;
 
             return "--" + buffer;
+        }
+    }
+
+    public static class OptionListWithValue extends OptionList
+    {
+        private final String m_Value;
+
+        public String getValue()
+        {
+            return m_Value;
+        }
+
+        protected OptionListWithValue(java.util.List<Character> aOptions, final String aValue)
+        {
+            super(aOptions);
+
+            m_Value = aValue;
         }
     }
 }
