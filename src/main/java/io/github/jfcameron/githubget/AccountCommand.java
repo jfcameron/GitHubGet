@@ -16,10 +16,14 @@ public class AccountCommand extends Command
     {
         super("account", ""
                 + "get info about a github account specified by the first positional\n"
-                + "eg: account [account]\n"
-                + "zero options: print basic account info\n"
-                + "-r: no basic info, list account repos instead\n"
-                + "-f: ignore forks in repo list");
+                + "account [account]\n"
+                + "No args: print basic account info\n"
+                + "--repos: no basic info, list account repos instead\n"
+                + "-f: ignore forks in repo list\n"
+                + "--followers: list this user's followers\n"
+                + "--following: list users this user is following\n"
+                + "--languages: aggregation of programming languages used in all repos owned by this account\n"
+                + "--topics: aggregation of topics from all repos owned by this account\n");
     }
 
     private enum Mode
@@ -27,7 +31,9 @@ public class AccountCommand extends Command
         BasicInfo,
         Repositories,
         Followers,
-        Following
+        Following,
+        Languages,
+        Topics
     }
 
     @Override
@@ -79,6 +85,10 @@ public class AccountCommand extends Command
                         });
                     }
                     break;
+                    
+                    case Languages:
+                    case Topics:
+                        throw new RuntimeException("Lang and topic options are unimplemented");
 
                     default:
                     case BasicInfo:

@@ -15,7 +15,13 @@ public class RepositoryCommand extends Command
     public RepositoryCommand()
     {
         super("repo", ""
-                + "displays information about a git repo hosted on github");
+                + "displays information about a git repo hosted on github.\n"
+                + "repo [author] [repo]\n"
+                + "NO OPTION: print the title and descrption\n"
+                + "--issues: print title and body of all open issues\n"
+                + "--topics: print all repo topics\n"
+                + "--languages: print language and byte count within repo\n"
+                + "--readme: print contents of the repo's readme");
     }
 
     private enum Mode
@@ -35,19 +41,19 @@ public class RepositoryCommand extends Command
         String accountName = aParameters.getPositional(0);
 
         String repoName = aParameters.getPositional(1);
-        
+
         if (aParameters.containsLongOption("issues"))
             mode = Mode.Issues;
-        
+
         if (aParameters.containsLongOption("topics"))
             mode = Mode.Topics;
-        
+
         if (aParameters.containsLongOption("languages"))
             mode = Mode.Languages;
-        
+
         if (aParameters.containsLongOption("readme"))
             mode = Mode.Readme;
-        
+
         if (accountName != null && repoName != null)
             try
             {
@@ -71,7 +77,10 @@ public class RepositoryCommand extends Command
                     {
                         repository.getIssues().forEach((issue) ->
                         {
-                            System.out.println(issue);
+                            System.out.println(""
+                                    + "Title: " + issue.getTitle() + "\n"
+                                    + issue.getBody()
+                                    + "\n======================");
                         });
                     }
                     break;
@@ -84,7 +93,7 @@ public class RepositoryCommand extends Command
                         });
                     }
                     break;
-                    
+
                     case Readme:
                     {
                         System.out.println(repository.getReadme());
