@@ -8,9 +8,9 @@ import java.util.Map;
 /**
  * An embedded program
  */
-public abstract class Program
+public abstract class Command
 {
-    private Map<String, Program> m_Commands = new HashMap<>();
+    private Map<String, Command> m_Commands = new HashMap<>();
 
     private final String m_Name;
 
@@ -120,7 +120,7 @@ public abstract class Program
         run(parameters);
     }
 
-    public Program(final String aName, final String aDescription, List<Program> aCommands)
+    public Command(final String aName, final String aDescription, List<Command> aCommands)
     {
         m_Name = aName;
         m_Description = aDescription;
@@ -132,7 +132,7 @@ public abstract class Program
             });
     }
 
-    public Program(final String aName, final String aDescription)
+    public Command(final String aName, final String aDescription)
     {
         this(aName, aDescription, null);
     }

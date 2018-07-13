@@ -1,7 +1,7 @@
 package io.github.jfcameron.githubget;
 
 import io.github.jfcameron.githubget.taf.Parameter;
-import io.github.jfcameron.githubget.taf.Program;
+import io.github.jfcameron.githubget.taf.Command;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,44 +17,39 @@ import java.util.logging.Logger;
 public class Application
 {
     static String description = "";
-    
+
+    static APIToken token = null;
+
     public static void main(String[] args) throws Exception
     {
         BuildInfo.prettyPrint((Field[] fields) ->
         {
             for (final Field field : fields)
-            {
                 try
                 {
-                    description += field.getName() + ": " + field.get(null);
+                    description += field.getName() + ": " + field.get(null) + "\n";
                 }
                 catch (IllegalArgumentException | IllegalAccessException ex)
                 {
                     Logger.getLogger(Application.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
         });
-        
-        new Program("GitHubGet", "utility for viewing github data.",
-                Arrays.asList(new Program("Blar", "The blar command is very important!")
-                {
-                    @Override
-                    protected void usermain(Parameter.List aParameters)
-                    {
-                        if (aParameters.size() == 0)
-                            System.out.println("Greetings from blar!");
-                    }
-                }))
+
+        new Command("GitHubGet (Root)", "utility for viewing github data.\n" + description,
+                Arrays.asList(
+                        new AccountCommand(),
+                        new RepositoryCommand(),
+                        new OrganizationCommand()))
         {
             private void printGHData(final APIToken credentials) throws Exception
             {
                 Account githubdata = new Account(
+                        credentials,
                         "jfcameron", //Account name
                         true, //ignore forks
                         Arrays.asList( //ignore repos by name
                                 "bash-settings",
-                                "TF2-Bindings"),
-                        credentials);
+                                "TF2-Bindings"));
 
                 // AggregateLanguageScores
                 final Map<String, Long> totalLanguageScores = new HashMap<>();
@@ -147,6 +142,10 @@ public class Application
             @Override
             protected void usermain(Parameter.List aParameters)
             {
+                String oauthToken = aParameters.getPositional(0);
+
+                if (null != oauthToken && oauthToken.length() == 40)
+                    token = new APIToken(oauthToken);
             }
         }.run(args);
     }

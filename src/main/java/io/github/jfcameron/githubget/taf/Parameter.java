@@ -142,7 +142,7 @@ public abstract class Parameter
             return positionals.contains(new Positional(aValue));
         }
 
-        public Positional getPositional(final int aPosition)
+        public String getPositional(final int aPosition)
         {
             final java.util.List<Positional> positionals = new java.util.ArrayList<>();
 
@@ -152,7 +152,9 @@ public abstract class Parameter
                     positionals.add((Positional) param);
             });
 
-            return positionals.get(aPosition);
+            return aPosition >= positionals.size() ? null
+                    : positionals.get(aPosition) == null ? null
+                    : positionals.get(aPosition).getValue();
         }
 
         //====================================================================================================
