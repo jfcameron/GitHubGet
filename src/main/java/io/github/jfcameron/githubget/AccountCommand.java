@@ -19,7 +19,9 @@ public class AccountCommand extends Command
                 + "account [account]\n"
                 + "No args: print basic account info\n"
                 + "--repos: no basic info, list account repos instead\n"
-                + "-f: ignore forks in repo list\n"
+                + " -f: ignore forks in repo list\n"
+                + " -l: list languages with repos\n"
+                + " -t: list topics with repos\n"
                 + "--followers: list this user's followers\n"
                 + "--following: list users this user is following\n"
                 + "--languages: aggregation of programming languages used in all repos owned by this account\n"
@@ -33,7 +35,8 @@ public class AccountCommand extends Command
         Followers,
         Following,
         Languages,
-        Topics
+        Topics,
+        Issues
     }
 
     @Override
@@ -49,6 +52,15 @@ public class AccountCommand extends Command
             else
                 if (aParameters.containsLongOption("following"))
                     mode = Mode.Following;
+                else
+                    if (aParameters.containsLongOption("languages"))
+                        mode = Mode.Languages;
+                    else
+                        if (aParameters.containsLongOption("topics"))
+                            mode = Mode.Topics;
+                        else
+                            if (aParameters.containsLongOption("issues"))
+                                mode = Mode.Issues;
 
         String accountName = aParameters.getPositional(0);
 
@@ -64,6 +76,27 @@ public class AccountCommand extends Command
                         account.getRepositories().forEach((repo) ->
                         {
                             System.out.println(repo.getName());
+
+                            if (aParameters.containsOption('l'))
+                            {
+                                System.out.println("Languages:");
+
+                                if (repo.getLanguageBytes().size() > 0)
+                                    repo.getLanguageBytes().keySet().forEach((key)
+                                            -> System.out.println(key + ": " + repo.getLanguageBytes().get(key)));
+                                else
+                                    System.out.println("NONE");
+                            }
+
+                            if (aParameters.containsOption('t'))
+                            {
+                                System.out.println("Topics:");
+
+                                if (repo.getTopics().size() > 0)
+                                    repo.getTopics().forEach((topic) -> System.out.println(topic));
+                                else
+                                    System.out.println("NONE");
+                            }
                         });
                     }
                     break;
@@ -85,10 +118,51 @@ public class AccountCommand extends Command
                         });
                     }
                     break;
-                    
+
                     case Languages:
+                    {
+                        account.getRepositories().forEach((repo) ->
+                        {
+                            if (repo.getLanguageBytes().size() > 0)
+                                repo.getLanguageBytes().keySet().forEach((key)
+                                        -> System.out.println(key + ": " + repo.getLanguageBytes().get(key)));
+                            else
+                                System.out.println("NONE");
+                        });
+                    }
+                    break;
+
                     case Topics:
-                        throw new RuntimeException("Lang and topic options are unimplemented");
+                    {
+                        account.getRepositories().forEach((repo) ->
+                        {
+                            if (repo.getTopics().size() > 0)
+                                repo.getTopics().forEach((topic) -> System.out.println(topic));
+                            else
+                                System.out.println("No topics");
+                        });
+                    }
+                    break;
+
+                    case Issues:
+                    {
+                        account.getRepositories().forEach((repo) ->
+                        {
+                            System.out.println(repo.getName());
+
+                            if (repo.getIssues().size() > 0)
+                                repo.getIssues().forEach((issue) ->
+                                {
+                                    System.out.println("Title: " + ((Issue) issue).getTitle());
+                                    System.out.println("Body: " + ((Issue) issue).getBody());
+                                });
+                            else
+                                System.out.println("No issues");
+
+                            System.out.println();
+                        });
+                    }
+                    break;
 
                     default:
                     case BasicInfo:

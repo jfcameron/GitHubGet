@@ -112,8 +112,6 @@ public final class Repository
         return m_Readme;
     }
 
-    // https://api.github.com/repos/jfcameron/blapblop
-    // public Repository(final String aAccountName, final String aRepoName, final String aAPIToken)
     public Repository(final String aOwnerName, final String aRepoName, final APIToken aAPIToken) throws ParseException, Exception
     {
         this((JSONObject) (new JSONParser()).parse(io.github.jfcameron.githubget.util.API.authenticatedFetch(
