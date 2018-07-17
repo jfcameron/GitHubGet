@@ -3,6 +3,10 @@ package io.github.jfcameron.githubget;
 import static io.github.jfcameron.githubget.Application.token;
 import io.github.jfcameron.githubget.taf.Command;
 import io.github.jfcameron.githubget.taf.Parameter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -121,26 +125,53 @@ public class AccountCommand extends Command
 
                     case Languages:
                     {
-                        account.getRepositories().forEach((repo) ->
+                        System.out.println("Account-wide language usage:");
+                        
+                        final Map<String, Long> languageBytes = new HashMap<>();
                         {
-                            if (repo.getLanguageBytes().size() > 0)
-                                repo.getLanguageBytes().keySet().forEach((key)
-                                        -> System.out.println(key + ": " + repo.getLanguageBytes().get(key)));
-                            else
-                                System.out.println("NONE");
+
+                            account.getRepositories().stream().map((repo) -> repo.getLanguageBytes()).forEachOrdered((repoLanguageScores)
+                                    -> repoLanguageScores.keySet().forEach((key)
+                                            -> languageBytes.put(key, languageBytes.containsKey(key)
+                                            ? (long) languageBytes.get(key) + (long) repoLanguageScores.get(key)
+                                            : (long) repoLanguageScores.get(key))));
+                        }
+
+                        final List<Map.Entry<String, Long>> sortedEntires = new ArrayList<>(languageBytes.entrySet());
+                        sortedEntires.sort((Map.Entry<String, Long> l, Map.Entry<String, Long> r) ->
+                        {
+                            return l.getValue() >= r.getValue() ? -1 : +1;
                         });
+                        sortedEntires.forEach((entry) ->
+                        {
+                            System.out.println(entry.getKey() + ": " + entry.getValue());
+                        });
+                        System.out.println();
                     }
                     break;
 
                     case Topics:
                     {
-                        account.getRepositories().forEach((repo) ->
+                        System.out.println("Account-wide topics");
+                        
+                        final Map<String, Long> totalTopics = new HashMap<>();
                         {
-                            if (repo.getTopics().size() > 0)
-                                repo.getTopics().forEach((topic) -> System.out.println(topic));
-                            else
-                                System.out.println("No topics");
+                            account.getRepositories().forEach((repo) -> repo.getTopics().forEach((topic)
+                                    -> totalTopics.put(topic, totalTopics.containsKey(topic)
+                                            ? totalTopics.get(topic) + 1
+                                            : 1)));
+                        }
+
+                        final List<Map.Entry<String, Long>> sortedTopics = new ArrayList<>(totalTopics.entrySet());
+                        sortedTopics.sort((Map.Entry<String, Long> l, Map.Entry<String, Long> r) ->
+                        {
+                            return l.getValue() >= r.getValue() ? -1 : +1;
                         });
+                        sortedTopics.forEach((topic) ->
+                        {
+                            System.out.println(topic.getKey() + ": " + topic.getValue());
+                        });
+                        System.out.println();
                     }
                     break;
 

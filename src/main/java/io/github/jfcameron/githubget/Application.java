@@ -17,7 +17,7 @@ public class Application
 
     static APIToken token = null;
 
-    static Properties config = Resources.loadConfigFile();
+    static Config config = new Config();
 
     public static void main(String[] args) throws Exception
     {
@@ -38,7 +38,8 @@ public class Application
                 Arrays.asList(
                         new AccountCommand(),
                         new RepositoryCommand(),
-                        new OrganizationCommand()))
+                        new OrganizationCommand(),
+                        new SettingsCommand()))
         {
             @Override
             protected void usermain(Parameter.List aParameters)
@@ -48,7 +49,7 @@ public class Application
                 String oauthToken = config.getProperty("GithubToken");
 
                 if (oauthToken == null)
-                    System.out.println("" 
+                    System.out.println(""
                             + "Config does not contain githubtoken. "
                             + "This is not STRICTLY required to Github will subject you to a api call usage limit of 60/hr enforced on the basis of your external IP");
 

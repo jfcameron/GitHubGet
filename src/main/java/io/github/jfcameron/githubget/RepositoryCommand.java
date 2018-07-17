@@ -106,6 +106,7 @@ public class RepositoryCommand extends Command
                         System.out.println(repository.getName());
                         System.out.println(repository.getDescription());
                         System.out.println(repository.getCloneURL());
+                        System.out.println(repository.getHTMLUrl());
                     }
                     break;
                 }

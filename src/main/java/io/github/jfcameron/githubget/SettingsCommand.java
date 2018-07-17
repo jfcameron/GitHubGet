@@ -13,10 +13,25 @@ public class SettingsCommand extends Command
     {
         super("settings", "interact with config on disk");
     }
-    
+
     @Override
     protected void usermain(Parameter.List aParameters)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (aParameters.containsLongOption("check"))
+        {
+            if (Application.config.containsKey("GithubToken"))
+                System.out.println(Application.config.get("GithubToken"));
+            else
+                System.out.println("No token in config");
+        }
+        else
+        {
+            String token = aParameters.getLongOptionWithValue("token");
+
+            if (token != null)
+            {
+                Application.config.setProperty("GithubToken", token);
+            }
+        }
     }
 }

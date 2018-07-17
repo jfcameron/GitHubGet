@@ -157,9 +157,19 @@ public abstract class Parameter
                     : positionals.get(aPosition).getValue();
         }
 
+        public String getLongOptionWithValue(final String aName)
+        {
+            for (final Parameter param : m_Parameters)
+                if (param instanceof LongOptionWithValue)
+                    if (((LongOptionWithValue) param).getName().equals(aName))
+                        return ((LongOptionWithValue) param).getValue();
+
+            return null;
+        }
+
         //====================================================================================================
         //???
-        private java.util.List<LongOptionWithValue> getLongOptionsWithValues()
+        /*private java.util.List<LongOptionWithValue> getLongOptionsWithValues()
         {
             final java.util.List<LongOptionWithValue> longOptionsWithValue = new java.util.ArrayList<>();
 
@@ -170,8 +180,7 @@ public abstract class Parameter
             });
 
             return longOptionsWithValue;
-        }
-
+        }*/
         private java.util.List<Positional> getOptionListsWithValues()
         {
             throw new RuntimeException("getOptionListsWithValues currently not supported");

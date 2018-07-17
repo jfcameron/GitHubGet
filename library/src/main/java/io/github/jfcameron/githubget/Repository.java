@@ -39,6 +39,13 @@ public final class Repository
     {
         return m_Owner;
     }
+    
+    private final String m_HTMLUrl;
+    
+    public String getHTMLUrl()
+    {
+        return m_HTMLUrl;
+    }
 
     /**
      * repo description
@@ -128,6 +135,8 @@ public final class Repository
     protected Repository(final JSONObject aRepositoryJSON, final APIToken aAPIToken) throws Exception
     {
         m_Name = SimpleJSONUtil.getStringFromJSONObject(aRepositoryJSON, "name");
+        
+        m_HTMLUrl = SimpleJSONUtil.getStringFromJSONObject(aRepositoryJSON, "html_url");
 
         m_Description = SimpleJSONUtil.getStringFromJSONObject(aRepositoryJSON, "description");
 
