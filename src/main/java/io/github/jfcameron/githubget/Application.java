@@ -2,12 +2,7 @@ package io.github.jfcameron.githubget;
 
 import io.github.jfcameron.githubget.taf.Parameter;
 import io.github.jfcameron.githubget.taf.Command;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -21,6 +16,8 @@ public class Application
     static String description = "";
 
     static APIToken token = null;
+
+    static Properties config = Resources.loadConfigFile();
 
     public static void main(String[] args) throws Exception
     {
@@ -46,37 +43,14 @@ public class Application
             @Override
             protected void usermain(Parameter.List aParameters)
             {
-                try
-                {
-                    String pathToExec = Application.class.getProtectionDomain().getCodeSource().getLocation().toURI().toString();
-                    
-                    pathToExec = pathToExec.split("/*.jar", 2)[0];
-                    
-                    System.out.println(pathToExec);
-                    
-                    File f = new File(pathToExec + "config.cfg");
-                    
-                    if (!f.isFile())
-                        f.createNewFile();
+                //String oauthToken = aParameters.getPositional(0);
 
-                    Properties mySettings = new Properties();
-                    
-                    mySettings.load(new FileInputStream(pathToExec + "config.cfg"));
-                }
-                catch (FileNotFoundException ex)
-                {
-                    Logger.getLogger(Application.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                catch (IOException ex)
-                {
-                    Logger.getLogger(Application.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                catch (URISyntaxException ex)
-                {
-                    Logger.getLogger(Application.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                String oauthToken = config.getProperty("GithubToken");
 
-                String oauthToken = aParameters.getPositional(0);
+                if (oauthToken == null)
+                    System.out.println("" 
+                            + "Config does not contain githubtoken. "
+                            + "This is not STRICTLY required to Github will subject you to a api call usage limit of 60/hr enforced on the basis of your external IP");
 
                 if (null != oauthToken && oauthToken.length() == 40)
                     token = new APIToken(oauthToken);
