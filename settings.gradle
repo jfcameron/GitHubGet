@@ -1,4 +1,4 @@
-rootProject.name = "GitHubGet"
+rootProject.name = "ghget"
 
 include 'library'
 
